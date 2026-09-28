@@ -1,0 +1,149 @@
+purpose: "Find ingenuity-vs-assembly ratio, then automate everything that isn't ingenuity"
+units:
+  WALL: "minutes elapsed start→finish (includes waiting)"
+  HANDS: "minutes actually at keyboard"
+  BRAIN: "0-5 cognitive load"
+  BM: "brain-minutes = HANDS × BRAIN"
+  TYPE:
+    I: ingenuity
+    M: middleman_translation
+    A: assembly
+    W: waiting_on_client
+
+brain_scale:
+  0: a script does it
+  1: mechanical, no decisions
+  2: mechanical with small judgment calls
+  3: translation from client mess to spec
+  4: real invention
+  5: novel problem, no template
+
+sequence:
+  - harden_5
+  - instrument_4
+  - fence_6
+
+stages:
+  stage_4_build:
+    hypothesis:
+      hands_total: 370
+      bm_total: 930
+      bm_share:
+        ingenuity: 0.26
+        assembly: 0.39
+        middleman: 0.35
+    decision_block:
+      duration_minutes: 45
+      resolves:
+        - information_architecture_from_messy_intake
+        - copy_voice
+        - asked_for_x_need_y_translation
+    steps:
+      - id: "4.1"
+        name: intake_review_asset_audit
+        hands_est: 15
+        brain: 2
+        type: M
+        automatable: yes
+      - id: "4.2"
+        name: sitemap_page_plan
+        hands_est: 20
+        brain: 3
+        type: M
+        automatable: partial
+      - id: "4.3"
+        name: copy_pass
+        hands_est: 60
+        brain: 4
+        type: I
+        automatable: partial
+      - id: "4.4"
+        name: template_pick_theming
+        hands_est: 25
+        brain: 2
+        type: A
+        automatable: yes
+      - id: "4.5"
+        name: section_assembly_all_pages
+        hands_est: 90
+        brain: 2
+        type: A
+        automatable: yes
+      - id: "4.6"
+        name: image_prep_and_alt_text
+        hands_est: 30
+        brain: 1
+        type: A
+        automatable: yes
+      - id: "4.7"
+        name: forms_integrations_credentials
+        hands_est: 35
+        brain: 3
+        type: M
+        automatable: partial
+      - id: "4.8"
+        name: seo_basics
+        hands_est: 25
+        brain: 2
+        type: A
+        automatable: yes
+      - id: "4.9"
+        name: responsive_and_build_qa
+        hands_est: 25
+        brain: 2
+        type: A
+        automatable: yes
+      - id: "4.10"
+        name: client_review_round_and_edits
+        hands_est: 45
+        brain: 3
+        type: M
+        automatable: no
+
+  stage_5_launch:
+    hypothesis:
+      hands_total: 155
+      bm_total: 255
+      assembly_share: 0.88
+    steps:
+      - { id: "5.1", name: pre_deploy_checklist, hands_est: 20, brain: 1, type: A, automatable: yes }
+      - { id: "5.2", name: domain_dns_registrar_access, hands_est: 30, brain: 3, type: M, automatable: no }
+      - { id: "5.3", name: deploy, hands_est: 10, brain: 0, type: A, automatable: yes }
+      - { id: "5.4", name: ssl_www_redirects, hands_est: 10, brain: 1, type: A, automatable: yes }
+      - { id: "5.5", name: analytics_install_verify, hands_est: 10, brain: 1, type: A, automatable: yes }
+      - { id: "5.6", name: perf_lighthouse_and_fixes, hands_est: 25, brain: 2, type: A, automatable: partial }
+      - { id: "5.7", name: gbp_citations_update, hands_est: 15, brain: 1, type: A, automatable: yes }
+      - { id: "5.8", name: handover_doc_video, hands_est: 30, brain: 2, type: A, automatable: yes }
+      - { id: "5.9", name: final_invoice, hands_est: 5, brain: 0, type: A, automatable: yes }
+
+  stage_6_operate:
+    hypothesis:
+      hands_total_per_client_per_month: 110
+      bm_total_per_client_per_month: 235
+      key_risk: interruption
+    rail:
+      non_urgent_batch_window: fixed_weekly_window
+    steps:
+      - { id: "6.1", name: uptime_backup_monitoring, hands_est: 0, brain: 0, type: A, automatable: yes }
+      - { id: "6.2", name: support_triage_chatwoot, hands_est: 20, brain: 2, type: M, automatable: partial }
+      - { id: "6.3", name: small_content_edits, hands_est: 40, brain: 1, type: A, automatable: partial }
+      - { id: "6.4", name: monthly_bearing_report, hands_est: 30, brain: 3, type: M, automatable: partial }
+      - { id: "6.5", name: upsell_spotting, hands_est: 15, brain: 4, type: I, automatable: no }
+      - { id: "6.6", name: renewals_failed_billing, hands_est: 5, brain: 1, type: A, automatable: yes }
+
+practice_runs:
+  - run_id: run-a
+    label: clean_client
+    client: Fenwick Plumbing
+  - run_id: run-b
+    label: messy_client
+    client: Lakeside Home Services
+  - run_id: run-c
+    label: scope_creeper
+    client: Fenwick variant with booking+portal requests
+
+targets:
+  hands_to_wall_max_ratio: 0.25
+  bm_total_per_beacon_max: 600
+  ingenuity_bm_share_min: 0.50
+  zero_template_invention_leaks: true

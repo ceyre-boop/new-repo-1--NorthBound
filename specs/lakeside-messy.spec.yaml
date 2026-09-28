@@ -1,0 +1,85 @@
+client: Lakeside Home Services
+package: beacon
+run_id: run-b
+
+brand:
+  logo: assets/lakeside-logo.png
+  colors:
+    primary: "#1D4A73"
+    accent: "#FF8A00"
+    ink: "#222222"
+    paper: "#FFFFFF"
+  type:
+    head: Montserrat
+    body: Inter
+
+pages:
+  - slug: /
+    title: "Lakeside Home Services — Plumbing, HVAC, and Electrical"
+    seo:
+      description: ""
+    sections:
+      - type: hero
+        copy:
+          head: ""
+          sub: ""
+          cta: Book service
+        images:
+          - homepage-hero.jpg
+      - type: services-grid
+        copy:
+          head: ""
+          items:
+            - ""
+            - ""
+            - ""
+            - ""
+            - ""
+            - ""
+        images: []
+      - type: proof
+        copy:
+          head: ""
+          stats:
+            - ""
+            - ""
+            - ""
+        images:
+          - tech-team.jpg
+      - type: faq
+        copy:
+          head: ""
+          items:
+            - ""
+            - ""
+        images: []
+      - type: contact-cta
+        copy:
+          head: ""
+          sub: ""
+        images: []
+
+images:
+  homepage-hero.jpg:
+    status: need
+    alt: ""
+  tech-team.jpg:
+    status: replace
+    alt: ""
+  old-van-shot.jpg:
+    status: rejected
+    alt: "Outdated truck wrap with old phone number"
+
+integrations:
+  contact-form:
+    to: office@lakesidehomeservices.com
+  crm:
+    provider: housecall-pro
+
+seo:
+  description: ""
+  og_image: homepage-hero.jpg
+
+constraints:
+  max_review_rounds: 3
+  go_live_date: "2026-12-01"

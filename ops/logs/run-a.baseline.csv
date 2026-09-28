@@ -1,0 +1,26 @@
+run_id,step_id,started,stopped,wall_min,hands_min,brain_0_5,type_I_M_A_W,blocker,what_would_have_deleted_this_step
+run-a,4.1,,,20,15,2,M,,intake checklist ingestion script with gap detection
+run-a,4.2,,,25,20,3,M,,sitemap planner from validated intake spec
+run-a,4.3,,,75,60,4,I,,voice-preserving copy drafting and revision workflow
+run-a,4.4,,,30,25,2,A,,brand token extraction and theme application
+run-a,4.5,,,110,90,2,A,,section assembly compiler from spec
+run-a,4.6,,,35,30,1,A,,image pipeline (crop, compress, alt prefill)
+run-a,4.7,,,45,35,3,M,awaiting_credentials,credential collection portal with guided auth handoff
+run-a,4.8,,,30,25,2,A,,seo defaults generator from sitemap and business profile
+run-a,4.9,,,35,25,2,A,,automated viewport+link+form QA pass
+run-a,4.10,,,60,45,3,M,client_feedback,change-window with round cap and diff-based edits
+run-a,5.1,,,22,20,1,A,,pre-deploy verification script
+run-a,5.2,,,70,30,3,M,dns_access,delegated DNS ownership handoff checklist
+run-a,5.3,,,12,10,0,A,,single-command deploy pipeline
+run-a,5.4,,,12,10,1,A,,redirect and TLS post-deploy automation
+run-a,5.5,,,12,10,1,A,,analytics install+verify script
+run-a,5.6,,,35,25,2,A,,perf detect+guided fix routine
+run-a,5.7,,,18,15,1,A,,GBP/citation updater script
+run-a,5.8,,,35,30,2,A,,handover doc/video templating
+run-a,5.9,,,5,5,0,A,,invoice trigger on deploy event
+run-a,6.1,,,0,0,0,A,,monitoring already automated
+run-a,6.2,,,30,20,2,M,,tiered support triage rules and canned replies
+run-a,6.3,,,50,40,1,A,interruptions,batched edit window and SLA policy
+run-a,6.4,,,38,30,3,M,,report numbers autocollection with commentary draft
+run-a,6.5,,,20,15,4,I,,nothing
+run-a,6.6,,,7,5,1,A,,automated billing retry and renewal flow
