@@ -30,3 +30,26 @@ Example:
 - `python scripts/spec_checklist.py specs/fenwick-plumbing.spec.yaml --allow-empty-slots`
 
 This shape keeps Fenwick simple, and still holds for Lakeside-style messy inputs without changing the assembly model.
+
+## Northbound Ops Ledger (Stages 4·5·6)
+Ops baseline and targets live in:
+- `ops-ledger.stages-4-5-6.yaml`
+
+Practice-run log schema (one row per step, per run):
+- `run_id,step_id,started,stopped,wall_min,hands_min,brain_0_5,type_I_M_A_W,blocker,what_would_have_deleted_this_step`
+
+Template and baseline log:
+- `ops/logs/template.csv`
+- `ops/logs/run-a.baseline.csv`
+
+Generate the ledger report:
+- `python scripts/ops_ledger_report.py`
+
+The report computes:
+- HANDS/WALL ratio
+- BM totals and I/M/A/W BM shares
+- pass/fail vs targets
+- BM × frequency kill-order ranking
+
+Current operating sequence encoded in the ledger:
+- harden 5 → instrument 4 → fence 6
