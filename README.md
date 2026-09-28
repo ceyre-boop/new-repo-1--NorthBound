@@ -27,7 +27,7 @@ Use `scripts/spec_checklist.py` to enforce intake completeness and cross-referen
 - flags empty copy and alt slots as unresolved work orders (rejected images are exempt from alt completion)
 
 Example:
-- `python scripts/spec_checklist.py specs/fenwick-plumbing.spec.yaml --allow-empty-slots`
+- `python scripts/spec_checklist.py specs/fenwick-plumbing.spec.yaml --allow-empty-copy-slots` (suppresses empty copy slots only)
 
 This shape keeps Fenwick simple, and still holds for Lakeside-style messy inputs without changing the assembly model.
 
@@ -44,6 +44,8 @@ Template and baseline log:
 
 Generate the ledger report:
 - `python scripts/ops_ledger_report.py`
+- default discovery includes `ops/logs/run-*.csv` (excluding `*.baseline.csv`) plus `ops/logs/run-*.baseline.csv`
+- discovered log rows must be unique by `(run_id, step_id)` across files
 
 The report computes:
 - HANDS/WALL ratio

@@ -9,6 +9,8 @@ from typing import Any, Iterable
 import yaml
 from yaml import YAMLError
 
+VALID_IMAGE_STATUSES = {"have", "need", "replace", "rejected"}
+
 REQUIRED_TOP_LEVEL = [
     "client",
     "package",
@@ -41,9 +43,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Validate intake completeness for client spec files")
     parser.add_argument("spec", type=pathlib.Path, help="Path to a spec YAML file")
     parser.add_argument(
+        "--allow-empty-copy-slots",
+        action="store_true",
+        help="Allow empty copy slots without failing (does not bypass structural checks)",
+    )
+    parser.add_argument(
         "--allow-empty-slots",
         action="store_true",
-        help="Allow empty copy/alt slots without failing (does not bypass structural checks)",
+        help="Deprecated alias for --allow-empty-copy-slots",
     )
     args = parser.parse_args()
 
@@ -140,18 +147,25 @@ def main() -> int:
             continue
 
         status = image_meta.get("status")
-        alt = image_meta.get("alt")
-        if status != "rejected":
-            if not isinstance(alt, str):
-                issues.append(f"images.{image_name}.alt must be a string")
-            elif alt.strip() == "":
-                issues.append(f"empty alt slot: images.{image_name}.alt")
+        if "alt" not in image_meta:
+            issues.append(f"images.{image_name}.alt is required")
+            alt = None
+        else:
+            alt = image_meta.get("alt")
+        if status not in VALID_IMAGE_STATUSES:
+            issues.append(
+                f"images.{image_name}.status must be one of {sorted(VALID_IMAGE_STATUSES)}"
+            )
+        if not isinstance(alt, str):
+            issues.append(f"images.{image_name}.alt must be a string")
+        elif status != "rejected" and alt.strip() == "":
+            issues.append(f"empty alt slot: images.{image_name}.alt")
 
-    if args.allow_empty_slots:
+    if args.allow_empty_slots or args.allow_empty_copy_slots:
         issues = [
             issue
             for issue in issues
-            if not issue.startswith("empty copy slot:") and not issue.startswith("empty alt slot:")
+            if not issue.startswith("empty copy slot:")
         ]
 
     if issues:

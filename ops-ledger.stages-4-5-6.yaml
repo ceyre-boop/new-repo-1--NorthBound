@@ -137,7 +137,7 @@ practice_runs:
     client: Fenwick Plumbing
   - run_id: run-b
     label: messy_client
-    client: Lakeside Dental
+    client: Lakeside Home Services
   - run_id: run-c
     label: scope_creeper
     client: Fenwick variant with booking+portal requests

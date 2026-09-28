@@ -47,6 +47,8 @@ def iter_rows(log_paths: Iterable[pathlib.Path]) -> List[dict]:
                 raise ValueError(f"{log_path}: missing columns: {sorted(missing)}")
 
             for i, row in enumerate(reader, start=2):
+                if all((value is None or str(value).strip() == "") for value in row.values()):
+                    continue
                 if not row["what_would_have_deleted_this_step"].strip():
                     raise ValueError(
                         f"{log_path}:{i} missing what_would_have_deleted_this_step (use 'nothing' if none)"
@@ -70,6 +72,8 @@ def iter_rows(log_paths: Iterable[pathlib.Path]) -> List[dict]:
                         "brain_0_5": brain,
                         "type_I_M_A_W": row_type,
                         "bm": hands * brain,
+                        "source_file": str(log_path),
+                        "is_baseline": log_path.name.endswith(".baseline.csv"),
                     }
                 )
     return rows
@@ -109,19 +113,51 @@ def summarize(rows: List[dict], targets: dict) -> str:
 
     all_ratio = (all_hands / all_wall) if all_wall else 0.0
     all_ingenuity_share = (type_bm["I"] / all_bm) if all_bm else 0.0
+    run_hands_wall_ratios = {
+        run_id: (
+            (sum(r["hands_min"] for r in run_rows) / sum(r["wall_min"] for r in run_rows))
+            if sum(r["wall_min"] for r in run_rows)
+            else 0.0
+        )
+        for run_id, run_rows in by_run.items()
+    }
+    run_ingenuity_shares = {
+        run_id: (
+            (sum(r["bm"] for r in run_rows if r["type_I_M_A_W"] == "I") / sum(r["bm"] for r in run_rows))
+            if sum(r["bm"] for r in run_rows)
+            else 0.0
+        )
+        for run_id, run_rows in by_run.items()
+    }
+    run_bm_totals = {
+        run_id: sum(r["bm"] for r in run_rows)
+        for run_id, run_rows in by_run.items()
+    }
 
     out.append("\nCombined")
     out.append(f"- WALL: {all_wall:.1f} min")
     out.append(f"- HANDS: {all_hands:.1f} min")
-    out.append(f"- BM: {all_bm:.1f} (target <= {targets['bm_total_per_beacon_max']})")
+    out.append(
+        f"- BM: {all_bm:.1f} (per-run target <= {targets['bm_total_per_beacon_max']})"
+    )
     out.append(f"- Type BM shares: I={type_bm['I']/all_bm:.3f} M={type_bm['M']/all_bm:.3f} A={type_bm['A']/all_bm:.3f} W={type_bm['W']/all_bm:.3f}" if all_bm else "- Type BM shares: n/a")
 
-    pass_hands_ratio = all_ratio <= targets["hands_to_wall_max_ratio"]
-    pass_bm_total = all_bm <= targets["bm_total_per_beacon_max"]
-    pass_ingenuity = all_ingenuity_share >= targets["ingenuity_bm_share_min"]
+    pass_hands_ratio = all(
+        ratio <= targets["hands_to_wall_max_ratio"]
+        for ratio in run_hands_wall_ratios.values()
+    )
+    pass_bm_total = all(
+        bm <= targets["bm_total_per_beacon_max"] for bm in run_bm_totals.values()
+    )
+    pass_ingenuity = all(
+        share >= targets["ingenuity_bm_share_min"]
+        for share in run_ingenuity_shares.values()
+    )
     out.append("\nPass/Fail")
     out.append(f"- HANDS/WALL <= target: {'PASS' if pass_hands_ratio else 'FAIL'}")
-    out.append(f"- BM total <= target: {'PASS' if pass_bm_total else 'FAIL'}")
+    out.append(
+        f"- BM per run <= target: {'PASS' if pass_bm_total else 'FAIL'}"
+    )
     out.append(f"- Ingenuity BM share >= target: {'PASS' if pass_ingenuity else 'FAIL'}")
 
     by_step_bm = Counter()
@@ -161,24 +197,51 @@ def main() -> int:
         "--logs",
         type=pathlib.Path,
         nargs="*",
-        help="CSV log files. Defaults to ops/logs/run-*.csv and *.baseline.csv",
+        help="CSV log files. Defaults to ops/logs/run-*.csv (excluding *.baseline.csv) plus ops/logs/run-*.baseline.csv",
     )
     args = parser.parse_args()
 
     cfg = load_config(args.config)
-    targets = cfg["targets"]
+    targets = cfg.get("targets")
+    if not isinstance(targets, dict):
+        raise ValueError(
+            f"{args.config}: missing required top-level 'targets' mapping"
+        )
 
     if args.logs:
         logs = args.logs
     else:
         logs_dir = pathlib.Path("ops/logs")
-        logs = sorted(set(logs_dir.glob("run-*.csv")))
+        run_logs = {p for p in logs_dir.glob("run-*.csv") if not p.name.endswith(".baseline.csv")}
+        baseline_logs = set(logs_dir.glob("run-*.baseline.csv"))
+        logs = sorted(run_logs | baseline_logs)
 
     if not logs:
         raise ValueError("No log files found. Add run logs under ops/logs/.")
 
     rows = iter_rows(logs)
-    print(summarize(rows, targets))
+    deduped_rows: Dict[tuple[str, str], dict] = {}
+    for row in rows:
+        key = (row["run_id"], row["step_id"])
+        current = deduped_rows.get(key)
+        if current is None:
+            deduped_rows[key] = row
+            continue
+        if current["is_baseline"] and not row["is_baseline"]:
+            deduped_rows[key] = row
+            continue
+        if not current["is_baseline"] and not row["is_baseline"]:
+            raise ValueError(
+                "Duplicate non-baseline row for "
+                f"{key} in {current['source_file']} and {row['source_file']}"
+            )
+        if current["is_baseline"] and row["is_baseline"]:
+            raise ValueError(
+                "Duplicate baseline row for "
+                f"{key} in {current['source_file']} and {row['source_file']}"
+            )
+
+    print(summarize(list(deduped_rows.values()), targets))
     return 0
 
 

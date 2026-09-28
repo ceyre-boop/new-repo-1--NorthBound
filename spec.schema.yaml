@@ -83,6 +83,7 @@ properties:
           enum: [have, need, replace, rejected]
         alt:
           type: string
+          description: "Alt text work-order slot. Runtime checklist may exempt status=rejected assets from completion."
 
   integrations:
     type: object
