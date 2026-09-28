@@ -1,0 +1,67 @@
+client: Fenwick Plumbing
+package: beacon
+run_id: run-a
+
+brand:
+  logo: assets/logo.svg
+  colors:
+    primary: "#0B3D5F"
+    accent: "#E8871E"
+    ink: "#1A1A1A"
+    paper: "#FFFFFF"
+  type:
+    head: Archivo
+    body: Inter
+
+pages:
+  - slug: /
+    title: "Fenwick Plumbing — Plumber in Flint, MI"
+    sections:
+      - type: hero
+        copy:
+          head: ""
+          sub: ""
+          cta: Get a quote
+        images:
+          - hero-truck.jpg
+      - type: services-grid
+        copy:
+          head: ""
+          items:
+            - ""
+            - ""
+            - ""
+            - ""
+        images: []
+      - type: proof
+        copy:
+          head: ""
+          stats:
+            - ""
+            - ""
+        images:
+          - team-photo.jpg
+      - type: contact-cta
+        copy:
+          head: ""
+          sub: ""
+        images: []
+
+images:
+  hero-truck.jpg:
+    status: have
+    alt: ""
+  team-photo.jpg:
+    status: have
+    alt: ""
+
+integrations:
+  contact-form:
+    to: office@fenwickplumbing.com
+
+seo:
+  description: ""
+
+constraints:
+  max_review_rounds: 2
+  go_live_date: "2026-11-15"
